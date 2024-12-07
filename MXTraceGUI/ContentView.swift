@@ -32,7 +32,7 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
-                Picker("Choose an option", selection: $selectedOption) {
+                Picker("选择模式", selection: $selectedOption) {
                     ForEach(PickerOptions.allCases) { option in
                         Text(option.rawValue).tag(option)
                     }
@@ -136,7 +136,11 @@ struct ContentView: View {
     func cleanInputAddressUsingURLComponentsAndTrimSuffix(_ address: String) -> String {
         // 尝试将输入转换为 URL
         guard let url = URL(string: address), let host = url.host else {
-            // 如果不是完整 URL，直接处理字符串
+            // 如果不是完整 URL
+            // 检查并去掉 www. 前缀
+            if address.hasPrefix("www.") {
+                return String(address.dropFirst(4)) // 去掉 "www."
+            }
             return address
         }
         return host
