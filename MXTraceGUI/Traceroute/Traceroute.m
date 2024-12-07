@@ -71,6 +71,10 @@
     NSArray *addresses = [TracerouteCommon resolveHost:_hostname];
     if (addresses.count == 0) {
         NSLog(@"DNS解析失败");
+        // traceroute结束，回调结果
+        if (_finishCallback) {
+            _finishCallback(nil, NO, @"DNS解析失败");
+        }
         return;
     }
     _ipAddress = [addresses firstObject];
@@ -87,6 +91,9 @@
     
     
     if (remoteAddr == NULL) {
+        if (_finishCallback) {
+            _finishCallback(nil, NO, @"目标主机地址解析失败");
+        }
         return;
     }
     
@@ -96,6 +103,9 @@
                             SOCK_DGRAM,
                             isIPv6 ? IPPROTO_ICMPV6 : IPPROTO_ICMP)) < 0) {
         NSLog(@"创建socket失败");
+        if (_finishCallback) {
+            _finishCallback(nil, NO, @"创建socket失败");
+        }
         return;
     }
     
@@ -115,6 +125,9 @@
                        &ttl,
                        sizeof(ttl)) < 0) {
             NSLog(@"setsockopt失败");
+            if (_finishCallback) {
+                _finishCallback(nil, NO, @"setsockopt失败");
+            }
         }
         succeed = [self sendAndRecv:send_sock addr:remoteAddr ttl:ttl];
     } while (++ttl <= _maxTtl && !succeed);
@@ -123,7 +136,7 @@
     
     // traceroute结束，回调结果
     if (_finishCallback) {
-        _finishCallback([_results copy], succeed);
+        _finishCallback([_results copy], succeed, nil);
     }
 }
 

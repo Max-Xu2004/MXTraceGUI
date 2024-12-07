@@ -24,6 +24,11 @@ struct ContentView: View {
     @State private var isRunning: Bool = false
     
     @State private var selectedOption: PickerOptions = .TraceRT
+    
+    // 弹窗
+    @State private var showAlert = false
+    @State private var alertTitle = "默认标题"
+    @State private var alertMessage = "默认消息"
 
     var body: some View {
         VStack {
@@ -85,6 +90,13 @@ struct ContentView: View {
             
         }
         .padding()
+        .alert(alertTitle, isPresented: $showAlert) {
+            Button("确定", role: .cancel) {
+                print("用户点击了确定按钮")
+            }
+        } message: {
+            Text(alertMessage)
+        }
     }
     
     private func startRunning() {
@@ -109,9 +121,13 @@ struct ContentView: View {
                     listModels.append(result)
                 }
             }
-        } finish: { records, isSucceed in
+        } finish: { records, isSucceed, error in
             if isSucceed {
                 print(records ?? "")
+            } else {
+                alertTitle = "追踪失败"
+                alertMessage = error ?? "未知错误"
+                showAlert = true
             }
             isRunning = false
         }

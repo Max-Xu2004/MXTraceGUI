@@ -22,7 +22,7 @@ typedef void (^TracerouteStepCallback)(TracerouteRecord *record);
  @param results 所有的结果
  @param succeed 是否成功
  */
-typedef void (^TracerouteFinishCallback)(NSArray<TracerouteRecord *> *results, BOOL succeed);
+typedef void (^TracerouteFinishCallback)(NSArray<TracerouteRecord *> *results, BOOL succeed, NSString *error);
 
 @interface Traceroute : NSObject
 
