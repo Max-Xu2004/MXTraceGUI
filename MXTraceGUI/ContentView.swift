@@ -118,7 +118,10 @@ struct ContentView: View {
             if let record = record {
                 let result = ListModel(record: record)
                 result.fetchIPInfo { succeed in
-                    listModels.append(result)
+                    DispatchQueue.main.async {
+                        listModels.append(result)
+                        listModels.sort { $0.num < $1.num } // 确保按 num 排序
+                    }
                 }
             }
         } finish: { records, isSucceed, error in
@@ -140,7 +143,10 @@ struct ContentView: View {
                 let models = ListModel.setup(result: result)
                 for model in models {
                     model.fetchIPInfo { succeed in
-                        listModels.append(model)
+                        DispatchQueue.main.async {
+                            listModels.append(model)
+                            listModels.sort { $0.num < $1.num } // 确保按 num 排序
+                        }
                     }
                 }
             }
